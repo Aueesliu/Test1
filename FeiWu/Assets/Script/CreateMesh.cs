@@ -4,12 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CreateMesh : MonoBehaviour {
+public class CreateMesh : UnitySingleton<CreateMesh> {
 
-    private int goods=10;       //物品栏
-    private int x=50;
+    private int boxcount=12;        //物品栏
+    private int x=70;               
     private int y=-50;
-    private int high = 50;      //content长度      
+    private int high = 50;          //content长度   
+    private int x_real;   
     private GameObject box;
     private GameObject item;
     private Transform parentTranform;
@@ -17,6 +18,7 @@ public class CreateMesh : MonoBehaviour {
 
     //按钮
     private Button btn_add; 
+
     void Start()
     {
         item = Resources.Load<GameObject>("Item");
@@ -24,10 +26,10 @@ public class CreateMesh : MonoBehaviour {
         parentTranform = GameObject.Find("Sv_Panel/Viewport/Content").transform;
         contentParent = parentTranform.GetComponent<RectTransform>();
 
-        btn_add = transform.Find("Btn_add").GetComponent<Button>();
+       
         
-        AddMesh(goods);
-        CreateItem();
+        CreatBox(boxcount);     //先创建背包格子
+        CreateItem();           //再创建物品
     }
 
     void Update()
@@ -37,73 +39,136 @@ public class CreateMesh : MonoBehaviour {
     }
     private void CreateItem()
     {   
-        GameObject item_go = Instantiate(item);
-        item_go.transform.SetParent(parentTranform.GetChild(0));
-       // item_go.GetComponent<Image>().sprite = Resources.Load<Image>("Img/2");
-        item_go.transform.localPosition = Vector3.zero;
-        item_go.transform.localScale = Vector3.one;
+        for (int i = 0; i < 4; i++)
+        {
+             GameObject item_go = Instantiate(item);
+             item_go.transform.SetParent(parentTranform.GetChild(i));
+              
+             //ItemInfor itemInfor=item_go.AddComponent<ItemInfor>();
+
+
+             ItemInfor itemInfor = WhoItemIfor(i+1, item_go);
+
+             ItemInfor itemInfor_copy=CfgManager.Instance.JsonAdd_ItemInfor(i);
+             itemInfor.Goodsname=itemInfor_copy.Goodsname;
+             itemInfor.Id=itemInfor_copy.Id;
+             itemInfor.Effect=itemInfor_copy.Effect;
+             itemInfor.Coins=itemInfor_copy.Coins;                       //此处可以优化
+            
+             item_go.GetComponent<Image>().sprite = Resources.Load<Sprite>("Img/"+itemInfor.Id);
+             item_go.AddComponent<ItemDrag>();
+             item_go.transform.localPosition = Vector3.zero;
+             item_go.transform.localScale = Vector3.one;
+        
+        }
+
+        //item_go.GetComponent<Image>().sprite = Resources.Load<Sprite>("Img/2");
+        //ItemInfor itemInfor=item_go.AddComponent<ItemInfor>();          //要继承Mono才能作为组件添加
+        //itemInfor.Id=2;
+        
         
     }
+    public ItemInfor WhoItemIfor(int Iteminfor_id, GameObject itemobj)          //添加脚本
+    {
+        ItemInfor item;
+        switch (Iteminfor_id)
+        {
+            case 1:
+                item =itemobj.AddComponent<Item1>();
+                
+                break;
+            case 2:
+                item=itemobj.AddComponent<Item2>();
 
-    private void AddMesh(int a)
+                break;
+            case 3:
+                item= itemobj.AddComponent<Item3>();
+
+                break;
+            case 4:
+                item= itemobj.AddComponent<Item4>();
+
+                break;
+            default:
+                item = new ItemInfor();
+                break;
+        }
+        return item;
+    }
+
+
+    private void CreatBox(int a)                                //可优化
     {
         int line = a / 3;
         int remain = a % 3;
         
         for (int i = 0; i < line; i++)
         {
-            x = 50;
+            x_real =x;
             for (int j = 0; j < 3; j++)
             {
                 SetMesh();
-                x += 480;
+                x_real += 480;
             }
             y -= 450;
             high += 450;
         }
         if (remain!=0)
         {
-            x = 50;
+            x_real =x;
             for (int j = 0; j < remain; j++)
             {
                 SetMesh();
-                x += 480;
+                x_real += 480;
             }
             high += 450;
         }
-        contentParent.sizeDelta = new Vector2(1500, high);           //contenet变化
+        if (remain==0)
+        {
+            y +=450;
+        }
+        contentParent.sizeDelta = new Vector2(1500, high); 
+        
+          
     }
-    private void SetMesh()
+    public GameObject SetMesh()
     {
         GameObject box_obj = Instantiate(box);
         box_obj.transform.SetParent(parentTranform);
-        box_obj.transform.localPosition = new Vector3(x, y, 0);
+        box_obj.transform.localPosition = new Vector3(x_real, y, 0);
+        return box_obj;
     }
     private void X_add()
     {
         if (Input.GetKeyDown(KeyCode.X))
         {
-            switch (parentTranform.childCount%3)
+            AddBox();
+        }
+    }
+    public GameObject AddBox()
+    {
+        switch (parentTranform.childCount%3)
             {
                 case 0:
                     y -= 450;
+                    x_real =x;              
                     high += 450;
-                    x = 50;
-                    SetMesh();
                     contentParent.sizeDelta = new Vector2(1500, high);
-                    break;
+                    return SetMesh();
                 case 1:
-                    x = 530;
-                    SetMesh();
-                    break;
+                    x_real=x+480;
+                    return SetMesh();
                 case 2:
-                    x = 1010;
-                    SetMesh();
-                    break;
+                    x_real =x+480*2;
+                    return SetMesh();
                 default:
-                    break;
+                    Debug.LogError("无法生成box");
+                    return null;
             }
-        }
+    }
+    public void test()
+    {
+        Debug.Log(11122233);
     }
     private void Z_del()
     {
@@ -119,7 +184,6 @@ public class CreateMesh : MonoBehaviour {
             }
         }
     }
-
 
     private void GetPosition(int index)
     {
