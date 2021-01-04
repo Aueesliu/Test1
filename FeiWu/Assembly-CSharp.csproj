@@ -55,9 +55,14 @@
      <Compile Include="Assets\Script\CfgManager.cs" />
      <Compile Include="Assets\Script\CreateMesh.cs" />
      <Compile Include="Assets\Script\define.cs" />
-     <Compile Include="Assets\Script\Infor\ItemInfor.cs" />
-     <Compile Include="Assets\Script\ItemDrag.cs" />
-     <Compile Include="Assets\Script\ItemManager.cs" />
+     <Compile Include="Assets\Script\Item\AllItem\Item1.cs" />
+     <Compile Include="Assets\Script\Item\AllItem\Item2.cs" />
+     <Compile Include="Assets\Script\Item\AllItem\Item3.cs" />
+     <Compile Include="Assets\Script\Item\AllItem\Item4.cs" />
+     <Compile Include="Assets\Script\Item\ItemData.cs" />
+     <Compile Include="Assets\Script\Item\ItemDrag.cs" />
+     <Compile Include="Assets\Script\Item\ItemInfor.cs" />
+     <Compile Include="Assets\Script\Item\ItemManager.cs" />
      <Compile Include="Assets\Script\Tool\GameTool.cs" />
      <Compile Include="Assets\Script\Tool\Singleton.cs" />
  <Reference Include="UnityEngine.CoreModule">
@@ -226,7 +231,7 @@
  <HintPath>E:/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
  </Reference>
  <Reference Include="LitJson">
- <HintPath>C:/Users/admin/Desktop/FeiWu/Assets/Plugins/LitJson.dll</HintPath>
+ <HintPath>C:/Users/admin/Desktop/Test1-main/FeiWu/Assets/Plugins/LitJson.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Analytics">
  <HintPath>C:/Users/admin/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.13/UnityEngine.Analytics.dll</HintPath>

@@ -31,10 +31,12 @@ public class UnitySingleton<T> : MonoBehaviour where T : Component
 {
     private static GameObject unitySingletonObj;
     protected static T instance;
+    
     public static T Instance
     {
         get
         {
+            System.Console.WriteLine("1");
             if (instance == null)
             {
                 if (unitySingletonObj == null)
